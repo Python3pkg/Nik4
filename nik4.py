@@ -202,7 +202,7 @@ if __name__ == "__main__":
 	parser.add_argument('--url', help='URL of a map to center on')
 	parser.add_argument('--ozi', type=argparse.FileType('w'), help='Generate ozi map file')
 	parser.add_argument('--wld', type=argparse.FileType('w'), help='Generate world file')
-	parser.add_argument('-t', '--tiles', type=int, choices=range(1, 13), default=1, help='Write N×N tiles, then join using imagemagick')
+	parser.add_argument('-t', '--tiles', type=int, choices=list(range(1, 13)), default=1, help='Write N×N tiles, then join using imagemagick')
 	parser.add_argument('--just-tiles', action='store_true', default=False, help='Do not join tiles, instead write ozi/wld file for each')
 	parser.add_argument('-v', '--debug', action='store_true', default=False, help='Display calculated values')
 	parser.add_argument('-f', '--format', dest='fmt', help='Target file format (by default looks at extension)')
@@ -376,12 +376,12 @@ if __name__ == "__main__":
 		select_layers(m, options.add_layers.split(',') if options.add_layers else [], options.hide_layers.split(',') if options.hide_layers else [])
 
 	if options.debug:
-		print('scale={}'.format(scale))
-		print('scale_factor={}'.format(scale_factor))
-		print('size={},{}'.format(size[0], size[1]))
-		print('bbox={}'.format(bbox))
-		print('bbox_wgs84={}'.format(transform.backward(bbox) if bbox else None))
-		print('layers=' + ','.join([l.name for l in m.layers if l.active]))
+		print(('scale={}'.format(scale)))
+		print(('scale_factor={}'.format(scale_factor)))
+		print(('size={},{}'.format(size[0], size[1])))
+		print(('bbox={}'.format(bbox)))
+		print(('bbox_wgs84={}'.format(transform.backward(bbox) if bbox else None)))
+		print(('layers=' + ','.join([l.name for l in m.layers if l.active])))
 
 	# generate metadata
 	if options.ozi:
@@ -424,14 +424,14 @@ if __name__ == "__main__":
 			m.buffer_size = TILE_BUFFER
 			tile_cnt = [int(math.ceil(1.0 * size[0] / width)), int(math.ceil(1.0 * size[1] / height))]
 			if options.debug:
-				print('tile_count={},{}'.format(tile_cnt[0], tile_cnt[1]))
-				print('tile_size={},{}'.format(width, height))
+				print(('tile_count={},{}'.format(tile_cnt[0], tile_cnt[1])))
+				print(('tile_size={},{}'.format(width, height)))
 			tmp_tile = '{:02d}_{:02d}_{}'
 			tile_files = []
 			for row in range(0, tile_cnt[1]):
 				for column in range(0, tile_cnt[0]):
 					if options.debug:
-						print('tile={},{}'.format(row, column))
+						print(('tile={},{}'.format(row, column)))
 					tile_bbox = mapnik.Box2d(bbox.minx + 1.0 * width * scale * column, bbox.maxy - 1.0 * height * scale * row, bbox.minx + 1.0 * width * scale * (column + 1), bbox.maxy - 1.0 * height * scale * (row + 1))
 					tile_size = [width if column < tile_cnt[0] - 1 else size[0] - width * (tile_cnt[0] - 1), height if row < tile_cnt[1] - 1 else size[1] - height * (tile_cnt[1] - 1)]
 					m.zoom_to_box(tile_bbox)
@@ -465,5 +465,5 @@ if __name__ == "__main__":
 			msvcrt.setmode(sys.stdout.fileno(), os.O_BINARY)
 
 		outfile.seek(0)
-		print(outfile.read())
+		print((outfile.read()))
 		outfile.close()
